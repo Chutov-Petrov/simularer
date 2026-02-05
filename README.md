@@ -45,7 +45,7 @@
 
 ## 📁 Структура проекта
 
-
+'''
 political_simulator/
 ├── app.py              # Основное приложение Flask
 ├── political_game.db   # База данных SQLite
@@ -59,7 +59,7 @@ political_simulator/
 │   ├── login.html     # Страница входа
 │   └── register.html  # Страница регистрации
 └── README.md          # Эта документация
-
+'''
 
  🔧 Установка и запуск
 

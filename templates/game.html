@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% block title %}Сценарий {{ turn }} - Политический Симулятор{% endblock %}
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <!-- Статистика страны -->
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 30px;">
+        <div style="background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-top: 4px solid #27ae60;">
+            <div style="font-size: 12px; color: #666;">Экономика</div>
+            <div id="economy-value" style="font-size: 24px; font-weight: bold; color: #27ae60;">{{ stats.economy }}</div>
+        </div>
+        <div style="background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-top: 4px solid #3498db;">
+            <div style="font-size: 12px; color: #666;">Социум</div>
+            <div id="social-value" style="font-size: 24px; font-weight: bold; color: #3498db;">{{ stats.social }}</div>
+        </div>
+        <div style="background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-top: 4px solid #2ecc71;">
+            <div style="font-size: 12px; color: #666;">Экология</div>
+            <div id="environment-value" style="font-size: 24px; font-weight: bold; color: #2ecc71;">{{ stats.environment }}</div>
+        </div>
+        <div style="background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-top: 4px solid #9b59b6;">
+            <div style="font-size: 12px; color: #666;">Популярность</div>
+            <div id="popularity-value" style="font-size: 24px; font-weight: bold; color: #9b59b6;">{{ stats.popularity }}</div>
+        </div>
+        <div style="background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-top: 4px solid #e74c3c;">
+            <div style="font-size: 12px; color: #666;">Бюджет</div>
+            <div id="budget-value" style="font-size: 24px; font-weight: bold; color: #e74c3c;">{{ stats.budget }}</div>
+        </div>
+    </div>
+
+    <!-- Ход игры -->
+    <div style="background: #2c3e50; color: white; padding: 10px 20px; border-radius: 5px; display: inline-block; margin-bottom: 10px;">
+        Ход {{ turn }} из 5
+    </div>
+
+    <!-- Прогресс-бар -->
+    <div style="margin-bottom: 20px;">
+        <div style="height: 10px; background: #ecf0f1; border-radius: 5px; overflow: hidden;">
+            <div id="progress-bar" style="height: 100%; width: {{ (turn / 5 * 100) }}%; background: linear-gradient(90deg, #3498db, #2ecc71); border-radius: 5px; transition: width 0.5s;"></div>
+        </div>
+    </div>
+
+    <!-- Сценарий -->
+    <div class="card" style="margin-bottom: 30px;">
+        <h2 style="color: #2c3e50; margin-bottom: 15px;">{{ scenario.title }}</h2>
+        <p style="font-size: 18px; line-height: 1.6; color: #333; margin-bottom: 25px;">
+            {{ scenario.description }}
+        </p>
+
+        <h3 style="color: #2c3e50; margin-bottom: 20px;">Ваши варианты:</h3>
+
+        <div id="options-container">
+            {% for option in scenario.options %}
+            <div class="option-card" data-scenario-id="{{ scenario.id }}" data-option-index="{{ loop.index0 }}"
+                 style="background: white; border: 2px solid #eee; border-radius: 8px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0; color: #2c3e50;">{{ option.text }}</h4>
+                    <div style="font-size: 12px; color: #666; background: #f8f9fa; padding: 4px 10px; border-radius: 12px;">
+                        {{ option.description }}
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; font-size: 14px;">
+                    {% for stat, value in option.effects.items() %}
+                    <div style="color: {% if value > 0 %}#27ae60{% elif value < 0 %}#e74c3c{% else %}#7f8c8d{% endif %};">
+                        {% if value > 0 %}+{% endif %}{{ value }}
+                        {% if stat == 'economy' %}Экономика
+                        {% elif stat == 'social' %}Социум
+                        {% elif stat == 'environment' %}Экология
+                        {% elif stat == 'popularity' %}Популярность
+                        {% else %}Бюджет{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="result" style="margin-bottom: 20px;"></div>
+    <div id="loading" style="display: none; text-align: center; margin: 20px 0;">
+        <div style="display: inline-block; padding: 15px 30px; background: #2c3e50; color: white; border-radius: 8px;">
+            <i class="fas fa-spinner fa-spin"></i> Сохраняем результаты...
+        </div>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="/dashboard" class="btn" style="background: #95a5a6; color: white; padding: 12px 24px; border-radius: 5px; text-decoration: none; margin-right: 15px;">
+            <i class="fas fa-home"></i> В Кабинет
+        </a>
+    </div>
+</div>
+
+<style>
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .option-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border-color: #3498db;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const optionCards = document.querySelectorAll('.option-card');
+        const resultDiv = document.getElementById('result');
+        const loadingDiv = document.getElementById('loading');
+        const progressBar = document.getElementById('progress-bar');
+
+        optionCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const scenarioId = this.dataset.scenarioId;
+                const optionIndex = this.dataset.optionIndex;
+
+                // Блокируем все кнопки
+                optionCards.forEach(c => {
+                    c.style.pointerEvents = 'none';
+                    c.style.opacity = '0.6';
+                    c.style.cursor = 'not-allowed';
+                });
+
+                // Выделяем выбранную карточку
+                this.style.borderColor = '#3498db';
+                this.style.background = '#f8fafc';
+
+                // Показываем результат
+                resultDiv.innerHTML = '<div style="background: #cce5ff; color: #004085; padding: 15px; border-radius: 5px; text-align: center;"><i class="fas fa-spinner fa-spin"></i> Принимаем решение...</div>';
+
+                // Отправляем запрос
+                fetch('/make_decision', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        scenario_id: parseInt(scenarioId),
+                        option_index: parseInt(optionIndex)
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Ошибка сервера: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Ответ от сервера:', data);
+
+                    if (data.success) {
+                        // Обновляем статистику
+                        document.getElementById('economy-value').textContent = data.stats.economy;
+                        document.getElementById('social-value').textContent = data.stats.social;
+                        document.getElementById('environment-value').textContent = data.stats.environment;
+                        document.getElementById('popularity-value').textContent = data.stats.popularity;
+                        document.getElementById('budget-value').textContent = data.stats.budget;
+
+                        // Анимация изменения значений
+                        animateValueChange('economy-value', data.stats.economy);
+                        animateValueChange('social-value', data.stats.social);
+                        animateValueChange('environment-value', data.stats.environment);
+                        animateValueChange('popularity-value', data.stats.popularity);
+                        animateValueChange('budget-value', data.stats.budget);
+
+                        if (data.game_completed) {
+                            // Обновляем прогресс-бар
+                            progressBar.style.width = '100%';
+
+                            // Показываем сообщение о завершении
+                            resultDiv.innerHTML = '<div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; text-align: center;">🎉 Игра завершена! Считаем результаты...</div>';
+                            loadingDiv.style.display = 'block';
+
+                            // Ждем 2 секунды и переходим
+                            setTimeout(() => {
+                                window.location.href = '/game_result';
+                            }, 2000);
+                        } else {
+                            // Обновляем прогресс-бар
+                            const currentTurn = parseInt("{{ turn }}") + 1;
+                            const newWidth = (currentTurn / 5) * 100;
+                            progressBar.style.width = newWidth + '%';
+
+                            // Показываем успешное сообщение
+                            resultDiv.innerHTML = '<div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; text-align: center;">✅ Решение принято! Переходим к следующему ходу...</div>';
+
+                            // Ждем 1.5 секунды и обновляем страницу
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        }
+                    } else {
+                        // Показываем ошибку
+                        resultDiv.innerHTML = `<div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: center;">
+                            ❌ Ошибка: ${data.message || 'Неизвестная ошибка'}
+                        </div>`;
+
+                        // Разблокируем кнопки
+                        resetOptionCards();
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка запроса:', error);
+                    resultDiv.innerHTML = `<div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: center;">
+                        ⚠️ Ошибка соединения: ${error.message}.<br>
+                        Проверьте интернет и попробуйте еще раз.
+                    </div>`;
+
+                    // Разблокируем кнопки
+                    resetOptionCards();
+                });
+            });
+        });
+
+        function animateValueChange(elementId, newValue) {
+            const element = document.getElementById(elementId);
+            const currentValue = parseInt(element.textContent);
+            const diff = newValue - currentValue;
+
+            if (diff !== 0) {
+                // Временно меняем цвет
+                const originalColor = element.style.color;
+                element.style.color = diff > 0 ? '#27ae60' : '#e74c3c';
+
+                // Пульсирующая анимация
+                element.style.animation = 'pulse 0.5s ease-in-out';
+
+                setTimeout(() => {
+                    element.style.color = originalColor;
+                    element.style.animation = '';
+                }, 1000);
+            }
+        }
+
+        function resetOptionCards() {
+            optionCards.forEach(c => {
+                c.style.pointerEvents = 'auto';
+                c.style.opacity = '1';
+                c.style.cursor = 'pointer';
+                c.style.background = 'white';
+                c.style.borderColor = '#eee';
+            });
+        }
+
+        // Добавляем стиль для анимации пульсации
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+
+            .option-card {
+                transition: all 0.3s ease;
+            }
+
+            .option-card:active {
+                transform: scale(0.98);
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+{% endblock %}

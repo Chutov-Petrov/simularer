@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}Результаты игры - Политический Симулятор{% endblock %}
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <div class="card" style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #2c3e50; margin-bottom: 10px;">Игра завершена! 🏛️</h1>
+        <p style="font-size: 18px; color: #7f8c8d;">Результаты вашего правления</p>
+    </div>
+
+    <!-- Общий результат -->
+    <div style="background: linear-gradient(135deg, #2c3e50, #34495e); color: white; border-radius: 10px; padding: 30px; margin-bottom: 30px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 10px;">
+            {% if total_score >= 80 %}👑
+            {% elif total_score >= 60 %}⭐
+            {% elif total_score >= 40 %}⚖️
+            {% else %}💥{% endif %}
+        </div>
+        <h2 style="font-size: 32px; margin-bottom: 15px;">
+            {% if total_score >= 80 %}Великий правитель!
+            {% elif total_score >= 60 %}Хороший руководитель
+            {% elif total_score >= 40 %}Средний результат
+            {% else %}Плохой результат{% endif %}
+        </h2>
+        <div style="font-size: 64px; font-weight: bold; margin-bottom: 20px;">{{ total_score }}</div>
+        <p style="font-size: 18px; opacity: 0.9;">Итоговый результат управления</p>
+    </div>
+
+    <!-- Детальная статистика -->
+    <div class="card" style="margin-bottom: 30px;">
+        <h3 style="color: #2c3e50; margin-bottom: 25px; text-align: center;">📊 Статистика страны</h3>
+
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 30px;">
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; border-top: 4px solid #27ae60;">
+                <div style="font-size: 36px; font-weight: bold; color: #27ae60; margin-bottom: 10px;">{{ stats.economy }}</div>
+                <div style="font-size: 14px; color: #666;">Экономика</div>
+                <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                    {% if stats.economy >= 80 %}Отличная
+                    {% elif stats.economy >= 60 %}Хорошая
+                    {% elif stats.economy >= 40 %}Стабильная
+                    {% else %}Слабая{% endif %}
+                </div>
+            </div>
+
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; border-top: 4px solid #3498db;">
+                <div style="font-size: 36px; font-weight: bold; color: #3498db; margin-bottom: 10px;">{{ stats.social }}</div>
+                <div style="font-size: 14px; color: #666;">Социум</div>
+                <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                    {% if stats.social >= 80 %}Высокий
+                    {% elif stats.social >= 60 %}Хороший
+                    {% elif stats.social >= 40 %}Средний
+                    {% else %}Низкий{% endif %}
+                </div>
+            </div>
+
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; border-top: 4px solid #2ecc71;">
+                <div style="font-size: 36px; font-weight: bold; color: #2ecc71; margin-bottom: 10px;">{{ stats.environment }}</div>
+                <div style="font-size: 14px; color: #666;">Экология</div>
+                <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                    {% if stats.environment >= 80 %}Чистая
+                    {% elif stats.environment >= 60 %}Хорошая
+                    {% elif stats.environment >= 40 %}Средняя
+                    {% else %}Плохая{% endif %}
+                </div>
+            </div>
+
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; border-top: 4px solid #9b59b6;">
+                <div style="font-size: 36px; font-weight: bold; color: #9b59b6; margin-bottom: 10px;">{{ stats.popularity }}</div>
+                <div style="font-size: 14px; color: #666;">Популярность</div>
+                <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                    {% if stats.popularity >= 80 %}Очень высокая
+                    {% elif stats.popularity >= 60 %}Высокая
+                    {% elif stats.popularity >= 40 %}Средняя
+                    {% else %}Низкая{% endif %}
+                </div>
+            </div>
+
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; border-top: 4px solid #e74c3c;">
+                <div style="font-size: 36px; font-weight: bold; color: #e74c3c; margin-bottom: 10px;">{{ stats.budget }}</div>
+                <div style="font-size: 14px; color: #666;">Бюджет</div>
+                <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                    {% if stats.budget >= 80 %}Профицит
+                    {% elif stats.budget >= 60 %}Сбалансирован
+                    {% elif stats.budget >= 40 %}Дефицит
+                    {% else %}Кризис{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <div style="display: inline-block; background: #f8f9fa; padding: 15px 30px; border-radius: 25px;">
+                <span style="color: #666;">Суммарный результат:</span>
+                <span style="font-size: 28px; font-weight: bold; color: #2c3e50; margin-left: 10px;">{{ total_score }} из 100</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Рекомендации -->
+    <div class="card">
+        <h3 style="color: #2c3e50; margin-bottom: 20px; text-align: center;">💡 Анализ правления</h3>
+
+        {% if total_score >= 80 %}
+        <div style="background: #d4edda; border-left: 4px solid #28a745; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+            <h4 style="color: #155724; margin-bottom: 10px;">🏆 Отличный результат!</h4>
+            <p style="color: #155724; margin: 0;">
+                Вы продемонстрировали выдающиеся навыки управления! Страна процветает под вашим руководством.
+                Продолжайте в том же духе!
+            </p>
+        </div>
+        {% elif total_score >= 60 %}
+        <div style="background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+            <h4 style="color: #0c5460; margin-bottom: 10px;">⭐ Хорошая работа!</h4>
+            <p style="color: #0c5460; margin: 0;">
+                Вы эффективно управляете страной. Есть небольшие проблемы, но в целом ситуация стабильная.
+                Обратите внимание на баланс между различными сферами.
+            </p>
+        </div>
+        {% elif total_score >= 40 %}
+        <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+            <h4 style="color: #856404; margin-bottom: 10px;">⚖️ Есть над чем работать</h4>
+            <p style="color: #856404; margin: 0;">
+                Страна испытывает некоторые трудности. Рекомендуется уделить внимание слабым сторонам
+                и найти баланс между экономическим развитием и социальной стабильностью.
+            </p>
+        </div>
+        {% else %}
+        <div style="background: #f8d7da; border-left: 4px solid #dc3545; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+            <h4 style="color: #721c24; margin-bottom: 10px;">💥 Требуются срочные меры</h4>
+            <p style="color: #721c24; margin: 0;">
+                Страна находится в кризисе. Необходимы радикальные изменения в политике.
+                Рекомендуется пересмотреть стратегию управления и уделить внимание самым проблемным сферам.
+            </p>
+        </div>
+        {% endif %}
+
+        <div style="margin-top: 30px;">
+            <h4 style="color: #2c3e50; margin-bottom: 15px;">📈 Рекомендации:</h4>
+            <ul style="color: #333; line-height: 1.6;">
+                {% if stats.economy < 40 %}
+                <li>Увеличьте инвестиции в экономику для стимулирования роста</li>
+                {% endif %}
+                {% if stats.social < 40 %}
+                <li>Уделите больше внимания социальным программам</li>
+                {% endif %}
+                {% if stats.environment < 40 %}
+                <li>Примите меры по защите окружающей среды</li>
+                {% endif %}
+                {% if stats.popularity < 40 %}
+                <li>Улучшите коммуникацию с населением</li>
+                {% endif %}
+                {% if stats.budget < 40 %}
+                <li>Оптимизируйте бюджетные расходы</li>
+                {% endif %}
+                {% if total_score >= 60 %}
+                <li>Продолжайте действовать сбалансированно, не пренебрегая ни одной сферой</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Действия после игры -->
+    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 40px; flex-wrap: wrap;">
+        <a href="/new_game" class="btn" style="background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+            <i class="fas fa-redo"></i> Новая игра
+        </a>
+        <a href="/dashboard" class="btn" style="background: #95a5a6; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+            <i class="fas fa-chart-bar"></i> В Кабинет
+        </a>
+        <a href="/history" class="btn" style="background: #f39c12; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+            <i class="fas fa-history"></i> История игр
+        </a>
+    </div>
+</div>
+
+<style>
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Анимация появления элементов
+        const elements = document.querySelectorAll('.card, .btn');
+        elements.forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                el.style.transition = 'opacity 0.5s, transform 0.5s';
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Показываем поздравление
+        const totalScore = {{ total_score|default(0) }};
+        if (totalScore >= 80) {
+            setTimeout(() => {
+                alert('🎉 Поздравляем с отличным результатом! Вы настоящий лидер!');
+            }, 1000);
+        }
+    });
+</script>
+{% endblock %}

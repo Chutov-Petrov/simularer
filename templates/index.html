@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="text-align: center; padding: 50px 0;">
+    <h1 style="font-size: 48px; margin-bottom: 20px;">🏛️ Политический Симулятор</h1>
+    <p style="font-size: 20px; color: #666; margin-bottom: 40px; max-width: 800px; margin: 0 auto 40px;">
+        Принимайте стратегические решения и управляйте страной!<br>
+        40 уникальных сценариев, 5 показателей, история результатов.
+    </p>
+
+    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 40px;">
+        {% if 'user_id' in session %}
+            <a href="/dashboard" class="btn" style="padding: 15px 30px; font-size: 18px;">
+                <i class="fas fa-play"></i> Начать игру
+            </a>
+        {% else %}
+            <a href="/register" class="btn" style="padding: 15px 30px; font-size: 18px;">
+                <i class="fas fa-user-tie"></i> Начать играть
+            </a>
+            <a href="/login" class="btn" style="background: #95a5a6; padding: 15px 30px; font-size: 18px;">
+                <i class="fas fa-sign-in-alt"></i> Войти
+            </a>
+        {% endif %}
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1000px; margin: 0 auto;">
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 10px;">🎮</div>
+            <h3>40 сценариев</h3>
+            <p>Экономика, политика, экология, социум</p>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 10px;">📊</div>
+            <h3>5 показателей</h3>
+            <p>Балансируйте экономику, социум, экологию, популярность и бюджет</p>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 10px;">🏆</div>
+            <h3>История игр</h3>
+            <p>Сохраняйте все результаты, анализируйте стратегии</p>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 10px;">👑</div>
+            <h3>Уровни и опыт</h3>
+            <p>Повышайте уровень, зарабатывайте опыт за каждую игру</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

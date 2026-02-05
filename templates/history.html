@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}История игр - Политический Симулятор{% endblock %}
+{% block content %}
+<div>
+    <h1 style="margin-bottom: 20px;">📜 История ваших игр</h1>
+    
+    {% if games %}
+    <div style="display: grid; gap: 15px;">
+        {% for game in games %}
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                    <h3 style="margin: 0;">Игра #{{ game.id }}</h3>
+                    <p style="color: #666; margin: 5px 0 0 0;">{{ game.created_at[:10] }} • {{ game.turns }} решений</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 28px; font-weight: bold; color: {% if game.score >= 80 %}#27ae60{% elif game.score >= 60 %}#3498db{% elif game.score >= 40 %}#f39c12{% else %}#e74c3c{% endif %};">
+                        {{ game.score }}
+                    </div>
+                    <div style="font-size: 14px; color: #666;">очков</div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
+                <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                    <div style="font-size: 12px; color: #666;">Экономика</div>
+                    <div style="font-weight: bold; color: #27ae60;">{{ game.economy }}</div>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                    <div style="font-size: 12px; color: #666;">Социум</div>
+                    <div style="font-weight: bold; color: #3498db;">{{ game.social }}</div>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                    <div style="font-size: 12px; color: #666;">Экология</div>
+                    <div style="font-weight: bold; color: #2ecc71;">{{ game.environment }}</div>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                    <div style="font-size: 12px; color: #666;">Популярность</div>
+                    <div style="font-weight: bold; color: #9b59b6;">{{ game.popularity }}</div>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                    <div style="font-size: 12px; color: #666;">Бюджет</div>
+                    <div style="font-weight: bold; color: #e74c3c;">{{ game.budget }}</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 50px;">
+        <div style="font-size: 48px; color: #ddd; margin-bottom: 20px;">📊</div>
+        <h3>Нет сыгранных игр</h3>
+        <p style="color: #666; margin: 15px 0;">Начните игру, чтобы увидеть историю здесь</p>
+        <a href="/new_game" class="btn">Начать первую игру</a>
+    </div>
+    {% endif %}
+    
+    <div style="margin-top: 30px;">
+        <a href="/dashboard" class="btn" style="background: #95a5a6;">Вернуться в кабинет</a>
+    </div>
+</div>
+{% endblock %}

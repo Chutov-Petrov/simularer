@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Регистрация - Политический Симулятор{% endblock %}
+{% block content %}
+<div style="max-width: 400px; margin: 60px auto;">
+    <div class="card">
+        <h2 style="text-align: center; margin-bottom: 30px;">Стать Правителем</h2>
+
+        {% if error %}
+        <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" id="register-form" style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">
+                    Имя правителя:
+                </label>
+                <input type="text" name="username" id="username"
+                       value="{{ request.form.username if request.form.username else '' }}"
+                       required
+                       style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px;"
+                       placeholder="Придумайте имя правителя">
+                <div id="username-hint" style="font-size: 12px; color: #666; margin-top: 5px;">
+                    • Минимум 3 символа<br>
+                    • Должно содержать буквы<br>
+                    • Можно использовать буквы, цифры и _
+                </div>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">
+                    Пароль:
+                </label>
+                <input type="password" name="password" id="password" required
+                       style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px;"
+                       placeholder="Придумайте пароль">
+                <div id="password-hint" style="font-size: 12px; color: #666; margin-top: 5px;">
+                    • Минимум 6 символов<br>
+                    • Должен содержать буквы и цифры
+                </div>
+                <div id="password-strength" style="margin-top: 5px;">
+                    <div style="height: 4px; background: #eee; border-radius: 2px; overflow: hidden;">
+                        <div id="strength-bar" style="height: 100%; width: 0%; background: #dc3545; transition: width 0.3s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">
+                <i class="fas fa-crown"></i> Стать Правителем
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p>Уже есть аккаунт? <a href="/login">Войти в Кабинет</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('strength-bar');
+        const form = document.getElementById('register-form');
+
+        usernameInput.addEventListener('input', function() {
+            const username = this.value;
+            const hint = document.getElementById('username-hint');
+
+            if (username.length < 3) {
+                hint.style.color = '#dc3545';
+            } else if (!/[a-zA-Zа-яА-Я]/.test(username)) {
+                hint.style.color = '#dc3545';
+            } else {
+                hint.style.color = '#28a745';
+            }
+        });
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const hint = document.getElementById('password-hint');
+
+            let strength = 0;
+            if (password.length >= 6) strength = 33;
+            if (password.length >= 8) strength = 66;
+            if (password.length >= 10 && /[A-Za-z]/.test(password) && /[0-9]/.test(password)) strength = 100;
+
+            strengthBar.style.width = strength + '%';
+
+            if (strength < 33) {
+                strengthBar.style.background = '#dc3545';
+                hint.style.color = '#dc3545';
+            } else if (strength < 66) {
+                strengthBar.style.background = '#ffc107';
+                hint.style.color = '#ffc107';
+            } else {
+                strengthBar.style.background = '#28a745';
+                hint.style.color = '#28a745';
+            }
+        });
+
+        form.addEventListener('submit', function(e) {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            if (username.length < 3) {
+                e.preventDefault();
+                alert('Имя правителя должно содержать минимум 3 символа');
+                usernameInput.focus();
+                return false;
+            }
+
+            if (!/[a-zA-Zа-яА-Я]/.test(username)) {
+                e.preventDefault();
+                alert('Имя правителя должно содержать хотя бы одну букву');
+                usernameInput.focus();
+                return false;
+            }
+
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('Пароль должен содержать минимум 6 символов');
+                passwordInput.focus();
+                return false;
+            }
+
+            if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+                e.preventDefault();
+                alert('Пароль должен содержать и буквы, и цифры');
+                passwordInput.focus();
+                return false;
+            }
+
+            return true;
+        });
+
+        usernameInput.focus();
+    });
+</script>
+{% endblock %}

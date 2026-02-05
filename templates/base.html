@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Политический Симулятор{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; }
+
+        .navbar { background: #2c3e50; padding: 15px 30px; }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { color: white; text-decoration: none; font-size: 24px; font-weight: bold; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-link { color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; }
+        .nav-link:hover { background: rgba(255,255,255,0.1); }
+
+        .main-content { max-width: 1200px; margin: 30px auto; padding: 0 20px; min-height: calc(100vh - 200px); }
+
+        .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+        .btn { display: inline-block; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; text-decoration: none; cursor: pointer; }
+        .btn:hover { background: #2980b9; }
+
+        .footer { background: #2c3e50; color: white; text-align: center; padding: 20px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">🏛️ Политический Симулятор</a>
+            <div class="nav-links">
+                {% if 'user_id' in session %}
+                    <a href="/dashboard" class="nav-link">Кабинет</a>
+                    <a href="/new_game" class="nav-link">Новая игра</a>
+                    <a href="/history" class="nav-link">История</a>
+                    <span style="color: white; margin: 0 10px;">{{ session.username }} (Ур. {{ session.level }})</span>
+                    <a href="/logout" class="btn">Выйти</a>
+                {% else %}
+                    <a href="/login" class="nav-link">Вход</a>
+                    <a href="/register" class="btn">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>© 2024 Политический Симулятор. Принимайте решения, меняйте страну!</p>
+    </footer>
+</body>
+</html>

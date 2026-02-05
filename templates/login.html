@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Вход - Политический Симулятор{% endblock %}
+{% block content %}
+<div style="max-width: 400px; margin: 60px auto;">
+    <div class="card">
+        <h2 style="text-align: center; margin-bottom: 30px;">Вход в Кабинет Правителя</h2>
+
+        {% if error %}
+        <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" id="login-form" style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">
+                    Имя правителя:
+                </label>
+                <input type="text" name="username" id="username" required
+                       style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px;"
+                       placeholder="Введите ваш логин">
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                    Логин должен содержать минимум 2 символа
+                </div>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">
+                    Пароль:
+                </label>
+                <input type="password" name="password" id="password" required
+                       style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px;"
+                       placeholder="Введите ваш пароль">
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                    Пароль должен содержать минимум 6 символов
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">
+                <i class="fas fa-sign-in-alt"></i> Войти в Кабинет
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p>Нет аккаунта? <a href="/register">Стать правителем</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username');
+
+        form.addEventListener('submit', function(e) {
+            const username = usernameInput.value.trim();
+
+            if (!username) {
+                e.preventDefault();
+                alert('Введите имя правителя');
+                usernameInput.focus();
+                return false;
+            }
+
+            if (username.length < 2) {
+                e.preventDefault();
+                alert('Имя правителя должно содержать минимум 2 символа');
+                usernameInput.focus();
+                return false;
+            }
+
+            return true;
+        });
+
+        usernameInput.focus();
+    });
+</script>
+{% endblock %}

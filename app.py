@@ -3,7 +3,7 @@ import sqlite3
 import random
 
 app = Flask(__name__)
-app.secret_key = 'political_simulator_2024'
+app.secret_key = 'political_simulator_2026'
 
 
 def init_db():
@@ -599,3 +599,4 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
